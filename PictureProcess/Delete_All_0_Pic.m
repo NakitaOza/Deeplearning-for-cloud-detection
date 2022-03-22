@@ -1,20 +1,20 @@
 function [index] = Delete_All_0_Pic(Trainpath,Labelpath)
-%此函数用于删除因裁剪导致的像素全部为0的图片，提高训练效率
+% This function is used to delete pictures whose pixels are all 0 due to cropping to improve training efficiency
 %   Author: Cheng Xin, Ocean University of China, Email: chengxin@stu.ouc.edu.cn
-%   TrainPath:训练图像路径
-%   LabelPath:标签路径
-%   index:记录删除的文件名
+%    TrainPath: training image path
+%    LabelPath: Label path
+%    index: record deleted file name
 
 Traindata=dir(fullfile(Trainpath,'*.png'));
-TraindataName={Traindata.name};
-Labeldata=dir(fullfile(Labelpath,'*.png'));
-LabeldataName={Labeldata.name};
+TraindataName = { Traindata . name };
+Labeldata = dir(fullfile(Labelpath, '*.png'));
+LabeldataName = { Labeldata . name };
 num=size(TraindataName);
-num=num(2);
+num = num ( 2 );
 index={};
 for i=1:num
     Picturename=[Trainpath,TraindataName{i}];
-    LabelName=[Labelpath,LabeldataName{i}];
+    LabelName = [Labelpath,LabeldataName{i}];
     img=imread(Picturename);
     if(~sum(sum(sum(img))))
         index=[index,TraindataName{i}];
@@ -27,4 +27,3 @@ for i=1:num
 end
 disp('Finished!');
 end
-

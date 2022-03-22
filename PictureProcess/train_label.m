@@ -1,23 +1,23 @@
-function [] = train_label(Pathrgbn,Pathmask,Outputimagedir,Outputlabeldir,patch,index)
-%用于批量处理文件夹内训练图像和标签图像为指定大小的图像切片，需要调用Patch_to_num函数
+% is used to batch process the training images and label images in the folder as image slices of the specified size, and the Patch_to_num function needs to be called
 
 %Author: Cheng Xin, Ocean University of China, Email: chengxin@stu.ouc.edu.cn
 
-%Pathrgbn：训练图像文件夹路径
-%Pathmask：标签图像文件夹路径
-%Outputimagedir：输出训练图像文件夹路径
-%Outputlabeldir：输出标签图像文件夹路径
-%patch：切片大小
-%index：输出图像名称起始索引,其为可选参数，默认为1
-%注意：为了避免出错，请将训练图像与对应标签图像用相同名字命名
+% Pathrgbn = 'RGB_Images_IN'
+% Pathmask = "labelImages"
+% Outputimagedir= "RGB_Images_OUT"
+% Outputlabeldir= "labelImagesOUT"
+% patch= [128 128]
+% index: The starting index of the output image name, which is an optional parameter, the default is 1
+% Note: To avoid mistakes, please name the training image and the corresponding label image with the same name
+function [] = train_label(Pathrgbn,Pathmask,Outputimagedir,Outputlabeldir,patch,index)
 
 
 Filergbn = dir(fullfile(Pathrgbn,'*.tif'));
-Filermask = dir(fullfile(Pathmask,'*.tif'));
+Filermask =  dir ( fullfile ( Pathmask , '*.tif' ));
 FileNamesrgbn = {Filergbn.name};
 FileNamesmask = {Filermask.name};
 filenum=size(FileNamesrgbn);
-
+disp('job done 1');
 if ~exist(Outputimagedir,'file')
     mkdir(Outputimagedir);
 end
@@ -25,24 +25,28 @@ if ~exist(Outputlabeldir,'file')
     mkdir(Outputlabeldir);
 end
 
-
+disp('job done 2');
 
 if(nargin==5)
+    disp('job done 3');
     index=1;
     for i=1:filenum(2)
+        disp('job done 4');
         if(strcmp(FileNamesmask{i},FileNamesrgbn{i}))
             inputimage=[Pathrgbn,FileNamesrgbn{i}];
             inputlabel=[Pathmask,FileNamesmask{i}];
             disp(['Processing ','No.',num2str(i),'/',num2str(filenum(2)),' Picture:',FileNamesrgbn{i}])
             index=Patch_to_num(patch,inputimage,inputlabel,Outputimagedir,Outputlabeldir,index);
         else
-            disp(['系统将',FileNamesrgbn{i},'与',FileNamesmask{i},'对应。'])
-            disp('图像与标签未对应，建议将命名统一。')
+            disp ([ ' The system will ' ,FileNamesrgbn{ i }, ' corresponds to ' ,FileNamesmask{ i }, ' . ' ])
+            disp ( ' The image does not correspond to the label, it is recommended to unify the naming. ' )
             break;
         end
     end
-elseif(nargin==6)
+elseif ( nargin == 6 )
+    disp('job done 5');
     for i=1:filenum(2)
+        disp('job done 6');
         if(strcmp(FileNamesmask{i},FileNamesrgbn{i}))
             inputimage=[Pathrgbn,FileNamesrgbn{i}];
             inputlabel=[Pathmask,FileNamesmask{i}];
@@ -50,14 +54,13 @@ elseif(nargin==6)
             index=Patch_to_num(patch,inputimage,inputlabel,Outputimagedir,Outputlabeldir,index);
             
         else
-            disp(['系统将',FileNamesrgbn{i},'与',FileNamesmask{i},'对应。'])
-            disp('图像与标签未对应，建议将命名统一。')
+            disp ([ ' The system will ' ,FileNamesrgbn{ i }, ' corresponds to ' ,FileNamesmask{ i }, ' . ' ])
+            disp ( ' The image does not correspond to the label, it is recommended to unify the naming. ' )
             break;
         end
     end
 else
-    disp('输入参数不正确。')
+    disp('job done 7');
+    disp ( ' The input parameter is incorrect. ' )
 end
 end
-
-
