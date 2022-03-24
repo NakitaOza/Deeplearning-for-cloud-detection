@@ -16,20 +16,31 @@ patch = 128
 
 %% CONCAT RGB IMAGES INTO ONE IMAGE
 
-imDir = fullfile(raw_data_dir,'b_*.TIF');
+imDir = fullfile(raw_data_dir,'a_*.TIF');
 imds = imageDatastore(imDir);
-img_in = cat(3, readimage(imds,1), readimage(imds,2), readimage(imds,3));
+img_in_uint16 = cat(3, readimage(imds,1), readimage(imds,2), readimage(imds,3));
+if isa(img_in_uint16,'uint16')
+    disp('image is in uint16');
+    img_in = im2uint8(img_in_uint16);
+else
+    img_in = img_in_uint16;
+end
 imshow(img_in);
 
-
-imwrite(img_in, [inputRGBNPath 'a.TIF'], 'tif')
+% img_b = imread(fullfile(raw_data_dir, "a_B.TIF"));
+% img_g =  imread(fullfile(raw_data_dir, "a_G.TIF"));
+% img_r =  imread(fullfile(raw_data_dir, "a_R.TIF"));
+% img_in = cat(3, img_b, img_g, img_r);
+% 
+imshow(img_in);
+imwrite(img_in, [inputRGBNPath 'a.TIF'], 'tif');
 
 %imwrite(img_in, [validationTrainInput 'b.TIF'], 'tif')
 
 %% GENERATE PATCHES
 
-train_label(inputRGBNPath,inputLabelPath,TrainPatchPath,LabelPatchPath,patch)
-%train_label(validationTrainInput,validationLabelInput,validationTrainPatch,validationLabelPatch,patch)
+%train_label(inputRGBNPath,inputLabelPath,TrainPatchPath,LabelPatchPath,patch);
+train_label(validationTrainInput,validationLabelInput,validationTrainPatch,validationLabelPatch,patch);
 
 %% DELETE EMPTY TRAINING DATA (ALL BLACK)
 
@@ -51,4 +62,25 @@ Delete_All_0_Pic(TrainPatchPath,LabelPatchPath);
 
 imagesize = [128 128 3];
 
-MSCFF_V2(imagesize,TrainPatchPath,LabelPatchPath,validationTrainPatch,validationLabelPatch);
+[mscff_net_u8, log] = MSCFF_V2(imagesize,TrainPatchPath,LabelPatchPath,validationTrainPatch,validationLabelPatch);
+
+save mscff_net_u8
+
+%% TEST - INPUT IMAGES
+testOGImage = imread('202.jpg');   %THIS IS A TRAIN PATCH
+disp(size(testOGImage));
+%targetSize = [128 128];
+%testImage = imresize(testOGImage,targetSize);
+
+imshow(testOGImage)
+
+%% PREDICT - INPUT IMAGES
+
+C = semanticseg(testOGImage,mscff_net_u8);
+B = labeloverlay(testOGImage,C);
+imshow(B)
+
+% cloudMask = C == 'cloud';
+% 
+% figure
+% imshowpair(testOGImage, cloudMask,'montage')

@@ -5,9 +5,9 @@ function [index] = Delete_All_0_Pic(Trainpath,Labelpath)
 %    LabelPath: Label path
 %    index: record deleted file name
 
-Traindata=dir(fullfile(Trainpath,'*.png'));
+Traindata=dir(fullfile(Trainpath,'*.jpg'));
 TraindataName = { Traindata . name };
-Labeldata = dir(fullfile(Labelpath, '*.png'));
+Labeldata = dir(fullfile(Labelpath, '*.jpg'));
 LabeldataName = { Labeldata . name };
 num=size(TraindataName);
 num = num ( 2 );

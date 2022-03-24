@@ -17,8 +17,9 @@ C=size(A);
 C2=size(B);
 D=size(size(B));
 if(C(3)==4 && D(2)==2 && C(1)==C2(1) && C(2)==C2(2))
-    A = uint8 ( A );
-    B=uint8(B);
+% UNnecessary conversion as this will be done in the input file
+%     A = uint8 ( A );
+%     B=uint8(B);
     row=C(1);
     col = C ( 2 );
     if(mod(row,patch))
@@ -38,37 +39,47 @@ if(C(3)==4 && D(2)==2 && C(1)==C2(1) && C(2)==C2(2))
             Outputrgb=rgb(((i-1)*patch+1):i*patch,((j-1)*patch+1):j*patch,:);
             Outputngb=ngb(((i-1)*patch+1):i*patch,((j-1)*patch+1):j*patch,:);
             Outputlabel=mask(((i-1)*patch+1):i*patch,((j-1)*patch+1):j*patch);
-            imwrite(Outputrgb,[Outputimagedir,num2str(index),'.png']);
-            imwrite(Outputlabel,[Outputlabeldir,num2str(index),'.png']);
-            imwrite(Outputngb,[Outputimagedir,num2str(index),'_ngb','.png']);
-            imwrite(Outputlabel,[Outputlabeldir,num2str(index),'_ngb','.png']);
+            imwrite(Outputrgb,[Outputimagedir,num2str(index),'.jpg']);
+            imwrite(Outputlabel,[Outputlabeldir,num2str(index),'.jpg']);
+            imwrite(Outputngb,[Outputimagedir,num2str(index),'_ngb','.jpg']);
+            imwrite(Outputlabel,[Outputlabeldir,num2str(index),'_ngb','.jpg']);
             index = index + 1;
         end
     end
     disp('SUCCESSFUL!&&Channel=4')
 else if(C(3)==3 && D(2)==2 && C(1)==C2(1) && C(2)==C2(2))
-        A = uint8 ( A );
+        A = uint8 ( A ); %check if input image has values between 0 and 255. Only then this will work.
         B=uint8(B);
         row=C(1);
+        disp(row);
         col = C ( 2 );
+        disp(col);
         disp(patch)
         if(mod(row,patch))
+            disp('mod is for row')
             row=ceil(row/patch)*patch;
         end
         if(mod(col,patch))
+            disp('mod is for col')
             col=ceil(col/patch)*patch;
         end
+        X = sprintf('Row %d will be Col %d this year.',row,col);
+        disp(X)
         rgb=uint8(zeros([row,col,3]));
         rgb(1:C(1),1:C(2),:)=A;
         mask=uint8(zeros([row,col]));
         mask(1:C(1),1:C(2))=B;
+        disp(size(rgb));
+        disp(size(mask));
+        Z = sprintf('row/patch %d will be Col/patch %d this year.',row/patch,col/patch);
+        disp(Z);
         for i=1:(row/patch)
             for j=1:(col/patch)
                 Outputrgb=rgb(((i-1)*patch+1):i*patch,((j-1)*patch+1):j*patch,:);
                 Outputlabel=mask(((i-1)*patch+1):i*patch,((j-1)*patch+1):j*patch);
                 disp(num2str(index))
-                imwrite(Outputrgb,[Outputimagedir,num2str(index),'.png']);
-                imwrite(Outputlabel,[Outputlabeldir,num2str(index),'.png']);
+                imwrite(Outputrgb,[Outputimagedir,num2str(index),'.jpg']);
+                imwrite(Outputlabel,[Outputlabeldir,num2str(index),'.jpg']);
                 index = index + 1;
             end
         end
