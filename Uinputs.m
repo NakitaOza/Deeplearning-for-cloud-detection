@@ -7,17 +7,11 @@ raw_data_dir = 'data\RGBN_raw\';
 
 inputRGBNPath = 'data\inputRGBN\';
 inputLabelPath = 'data\inputLabel\';
-TrainPatchPath = 'data\trainPatch\';
-LabelPatchPath = 'data\labelPatch\';
-
 UTrainPatchPath = 'data\trainPatchU\';
 ULabelPatchPath = 'data\labelPatchU\';
 
 validationTrainInput = 'data\validationInput\';
 validationLabelInput = 'data\validationLabel\';
-validationTrainPatch = 'data\validationInputPatch\';
-validationLabelPatch = 'data\validationLabelPatch\';
-
 UvalidationTrainPatch = 'data\validationInputPatchU\';
 UvalidationLabelPatch = 'data\validationLabelPatchU\';
 
@@ -26,7 +20,7 @@ testLabel = 'data\testInput\';
 testPatch = 'data\testPatch\';
 predcitTestBinary = 'data\predictTestBinary\';
 testLabelPatch = 'data\testPatch\';
-patch = 128
+patch = 512
 
 %% CONCAT RGB IMAGES INTO ONE IMAGE
 
@@ -55,15 +49,12 @@ imwrite(img_in, [inputRGBNPath 'c.TIF'], 'tif');
 % disp(size(testImage))
 % imwrite(testImage, [testInput 'test.TIF'], 'tif');
 
-%% GENERATE PATCHES
+%% Check size of input Image
 
-%train_label(inputRGBNPath,inputLabelPath,TrainPatchPath,LabelPatchPath,patch);
-%train_label(validationTrainInput,validationLabelInput,validationTrainPatch,validationLabelPatch,patch);
-%train_label(testInput,testPatch,patch);
+inputImage = imread([inputRGBNPath 'a.tif']);
+disp(size(inputImage));
 
-%% GENERATE PATCHES -UCDNet
-
-patch = 512
+%% GENERATE PATCHES - UCDNet
 
 Utrain_label(inputRGBNPath,inputLabelPath,UTrainPatchPath,ULabelPatchPath,patch);
 Utrain_label(validationTrainInput,validationLabelInput,UvalidationTrainPatch,UvalidationLabelPatch,patch);
@@ -72,48 +63,51 @@ Utrain_label(validationTrainInput,validationLabelInput,UvalidationTrainPatch,Uva
 
 %% DELETE EMPTY TRAINING DATA (ALL BLACK)
 
-%Delete_All_0_Pic(TrainPatchPath,LabelPatchPath);
-%Delete_All_0_Pic(validationTrainPatch,validationLabelPatch);
-Delete_All_0_Pic(testPatch);
+UDelete_All_0_Pic(UTrainPatchPath,ULabelPatchPath);
+UDelete_All_0_Pic(UvalidationTrainPatch,UvalidationLabelPatch);
+%Delete_All_0_Pic(testPatch);
 
 %% TEST STUFF
-img_patch_file_list = dir(fullfile(TrainPatchPath,'*.jpg'));
+img_patch_file_list = dir(fullfile(UTrainPatchPath,'*.jpg'));
 img_patch_file_list_names = { img_patch_file_list . name };
 img_patch = imread(img_patch_file_list_names{1});
-size(img_patch) % PATCH SIZE  = 128 * 128 * 3
+size(img_patch); % PATCH SIZE  = 512 * 512
 
-%% MSCFF
+%% UCD-NET
+
+%function [net,log] = UCDNet(imagesize,imageDir,labelDir,imageDirV,labelDirV)
+
 % imagesize: The size of the imageinput,which format is a vector of 1X3
-% imageDir: Training data set folder path : TrainPatchPath
-% labelDir: Label data set folder path : LabelPatchPath
+% imageDir: Training data set folder path
+% labelDir: Label data set folder path
 % imageDirV: Validation data set folder path
 % labelDirV: Validation-label data set folder path
 
-imagesize = [128 128 3];
+imagesize = [512 512 3];
 
-[mscff_net_u8, log] = MSCFF_V2(imagesize,TrainPatchPath,LabelPatchPath,validationTrainPatch,validationLabelPatch);
+[uc_net, log] = UCDNet(imagesize,UTrainPatchPath,ULabelPatchPath,UvalidationTrainPatch,UvalidationLabelPatch);
 
-save mscff_net_u8
+save uc_net
 
 %% TEST - INPUT IMAGES
 testOGImage = imread('winterKTH.jpeg');   %THIS IS A TRAIN PATCH
 disp(size(testOGImage));
-targetSize = [128 128];
+targetSize = [512 512];
 testImage = imresize(testOGImage,targetSize);
 
 imshow(testImage)
 
 %% PREDICT - INPUT IMAGES
-testImage = imread("data\trainPatch\202.jpg");
-disp(size(testImage));
-C = semanticseg(testImage,mscff_net_u8);
+% testImage = imread("data\trainPatchU\206.jpg");
+% disp(size(testImage));
+C = semanticseg(testImage,uc_net);
 B = labeloverlay(testImage,C);
-max(testImage, [], 'all');
+%max(testImage, [], 'all');
 
-% cloudMask = C == 'cloud';
+cloudMask = C == 'cloud';
 % 
-% figure
-% imshowpair(testOGImage, cloudMask,'montage')
+figure
+imshowpair(testImage, cloudMask,'montage')
 
 %% PREDICT - DATA STORE FOR ONE IMAGE
 
@@ -127,7 +121,7 @@ tempdir = 'data\predictTest\';
 % pixelLabelID = [255 0];
 % pxdsTruth = pixelLabelDatastore(testLabelDir,classNames,pixelLabelID);
 
-pxdsResults = semanticseg(imds_test,mscff_net_u8,'MiniBatchSize',1,'ExecutionEnvironment','gpu','WriteLocation',tempdir);
+pxdsResults = semanticseg(imds_test,uc_net,'MiniBatchSize',1,'ExecutionEnvironment','gpu','WriteLocation',tempdir);
 
 %% TRY TO VISUALIZE THIS
 
