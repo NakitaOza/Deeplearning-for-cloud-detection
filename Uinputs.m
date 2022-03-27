@@ -98,18 +98,18 @@ testImage = imresize(testOGImage,targetSize);
 imshow(testImage)
 
 %% PREDICT - INPUT IMAGES
-% testImage = imread("data\trainPatchU\206.jpg");
-% disp(size(testImage));
-C = semanticseg(testImage,uc_net);
-B = labeloverlay(testImage,C);
-%max(testImage, [], 'all');
-
-cloudMask = C == 'cloud';
+testImage = imread("winterKTH.jpeg");
+disp(size(testImage));
+% C = semanticseg(testImage,uc_net);
+% B = labeloverlay(testImage,C);
+% %max(testImage, [], 'all');
 % 
-figure
-imshowpair(testImage, cloudMask,'montage')
+% cloudMask = C == 'cloud';
+% % 
+% figure
+% imshowpair(testImage, cloudMask,'montage')
 
-%% PREDICT - DATA STORE FOR ONE IMAGE
+%% PREDICT - DATA STORE FOR ONE IMAGE - PATCH AND PREDICT
 
 % first create patches using section 1,2(KTH images are already 3 channel),3 and 4
 
@@ -123,7 +123,7 @@ tempdir = 'data\predictTest\';
 
 pxdsResults = semanticseg(imds_test,uc_net,'MiniBatchSize',1,'ExecutionEnvironment','gpu','WriteLocation',tempdir);
 
-%% TRY TO VISUALIZE THIS
+%% TRY TO VISUALIZE THIS - CONVERT PERDICTION TO MASK - OR DO USING PATCH_TO_IMAGE.M
 
 % I = read(imds_test);
 % C = read(pxdsResults);
@@ -131,7 +131,7 @@ pxdsResults = semanticseg(imds_test,uc_net,'MiniBatchSize',1,'ExecutionEnvironme
 % B = labeloverlay(I,C{1});
 % figure
 % imshow(B)
-TestImageToPredictList = readall(imds_test);
+
 PredictionList = readall(pxdsResults);
 
 %The images in temp dir are correct. But they are categorical (1-cloud, 2-background)so they cant
@@ -143,14 +143,45 @@ for i = 1:length(PredictionList) % loop through all your images to get the mask
     %mask image
     cloudMask = PredictionList{i} == 'cloud';
     %save new image
-    imwrite(cloudMask,[predcitTestBinary num2str(count) '_p.png']);
+    imwrite(cloudMask,[predcitTestBinary num2str(count) '.jpg']);
     count = count + 1;
 end
 
-imout = imtile(TestImageToPredictList);
-imout2 = imtile()
+%% SHOW FINAL RESULTS
+output = patch_to_image([testInput 'test.tif'], testPatch, 512, true);
 
-%% LETS TRY TRANSFORM
-a_old = read(pxdsResults)
-new_pxds = transform(pxdsResults,@(x) ismember( x, 'cloud' ));
-a_new = read(new_pxds)
+
+%% TEST STUFF
+
+%analyzeNetwork(mscff_net_u8);
+
+% layer = 2;
+% name = mscff_net_u8.Layers(layer).Name
+
+channels = 1:3;
+I = deepDreamImage(mscff_net_u8,'conv_1',channels, ...
+    'PyramidLevels',1);
+
+figure
+I = imtile(I,'ThumbnailSize',[64 64]);
+imshow(I)
+title(['Layer ',name,' Features'],'Interpreter','none')
+
+%act1 = activations(uc_net,testImage,'conv1');
+
+%% TEST OUT NEW GABOR FIlter basics
+
+testImageGray = rgb2gray(testImage);
+
+wavelength = [5 pi 7];
+orientation = [(1/4)*pi (2/4)*pi];
+gamma = [0.5];
+% sigma?? - gaussian säker
+g = gabor(wavelength,orientation,'SpatialAspectRatio', gamma);
+imshow(testImageGray);
+outMag = imgaborfilt(testImageGray,g);
+
+outSize = size(outMag);
+outMag = reshape(outMag,[outSize(1:2),1,outSize(3)]);
+figure, montage(outMag,'DisplayRange',[]);
+title('Montage of gabor magnitude output images.');

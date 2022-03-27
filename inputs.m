@@ -26,7 +26,7 @@ testLabel = 'data\testInput\';
 testPatch = 'data\testPatch\';
 predcitTestBinary = 'data\predictTestBinary\';
 testLabelPatch = 'data\testPatch\';
-patch = 128
+patch = 512
 
 %% CONCAT RGB IMAGES INTO ONE IMAGE
 
@@ -59,7 +59,7 @@ imwrite(img_in, [inputRGBNPath 'c.TIF'], 'tif');
 
 %train_label(inputRGBNPath,inputLabelPath,TrainPatchPath,LabelPatchPath,patch);
 %train_label(validationTrainInput,validationLabelInput,validationTrainPatch,validationLabelPatch,patch);
-%train_label(testInput,testPatch,patch);
+train_label(testInput,testPatch,patch);
 
 %% GENERATE PATCHES -UCDNet
 
@@ -127,7 +127,13 @@ tempdir = 'data\predictTest\';
 % pixelLabelID = [255 0];
 % pxdsTruth = pixelLabelDatastore(testLabelDir,classNames,pixelLabelID);
 
-pxdsResults = semanticseg(imds_test,mscff_net_u8,'MiniBatchSize',1,'ExecutionEnvironment','gpu','WriteLocation',tempdir);
+pxdsResults = semanticseg(imds_test,mscff_net_u8,'MiniBatchSize',1,'ExecutionEnvironment','gpu', ...
+    'WriteLocation',tempdir,'NamePrefix','');
+
+%% SHOW FINAL RESULTS
+% inimg = imread([testInput 'test.tif']);
+% imshow(inimg);
+output = patch_to_image([testInput 'winterKTH.jpeg'], tempdir, 512, true);
 
 %% TRY TO VISUALIZE THIS
 

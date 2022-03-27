@@ -16,6 +16,7 @@ for i=1:num
     Picturename=[Trainpath,TraindataName{i}];
 %     LabelName = [Labelpath,LabeldataName{i}];
     img=imread(Picturename);
+    disp(i);
     if(~sum(sum(sum(img))))
         index=[index,TraindataName{i}];
         delete(Picturename);

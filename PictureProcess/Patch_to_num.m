@@ -11,7 +11,7 @@ function [index] = Patch_to_num(patch,inputimage,Outputimagedir,index)
 %    index: The index of the starting output image
 
 %    loadtiff() function, please download it with matlab additional functions
-A=loadtiff(inputimage);
+A=imread(inputimage);
 % B=loadtiff(inputlabel);
 C=size(A);
 C2=size(A);
@@ -79,7 +79,8 @@ else if(C(3)==3 && D(2)==2 && C(1)==C2(1) && C(2)==C2(2))
                 Outputrgb=rgb(((i-1)*patch+1):i*patch,((j-1)*patch+1):j*patch,:);
 %                 Outputlabel=mask(((i-1)*patch+1):i*patch,((j-1)*patch+1):j*patch);
                 disp(num2str(index))
-                imwrite(Outputrgb,[Outputimagedir,num2str(index),'.jpg']);
+                filename = sprintf('%03d.jpg', index);
+                imwrite(Outputrgb,[Outputimagedir,filename]);
 %                 imwrite(Outputlabel,[Outputlabeldir,num2str(index),'.jpg']);
                 index = index + 1;
             end
