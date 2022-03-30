@@ -22,7 +22,7 @@ for i=1:num
         delete(Picturename);
         delete(LabelName);
     end
-    if(~mod(i,100))
+    if(~mod(i,5))
         disp(['Processing ',num2str(i),'/',num2str(num)]);
     end
 end

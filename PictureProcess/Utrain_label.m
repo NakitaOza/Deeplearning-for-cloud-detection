@@ -12,14 +12,15 @@ function [] = Utrain_label(Pathrgbn,Pathmask,Outputimagedir,Outputlabeldir,patch
 % Note: To avoid mistakes, please name the training image and the corresponding label image with the same name
 
 
-Filergbn = dir(fullfile(Pathrgbn,'*.tif'));
+Filergbn = dir(fullfile(Pathrgbn,'*.tiff'));
 disp(Filergbn);
-Filermask =  dir ( fullfile ( Pathmask , '*.tif' ));
+Filermask =  dir ( fullfile ( Pathmask , '*.tiff' ));
 FileNamesrgbn = {Filergbn.name};
-disp(FileNamesrgbn)
+disp(FileNamesrgbn);
 FileNamesmask = {Filermask.name};
 filenum=size(FileNamesrgbn);
 disp('job done 1');
+disp(filenum)
 
 if ~exist(Outputimagedir,'file')
     mkdir(Outputimagedir);

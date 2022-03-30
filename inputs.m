@@ -32,7 +32,8 @@ patch = 512
 
 imDir = fullfile(raw_data_dir,'c_*.TIF');
 imds = imageDatastore(imDir);
-img_in_uint16 = cat(3, readimage(imds,1), readimage(imds,2), readimage(imds,3));
+%img_nir = apply gbaor (readimage(imds,4))
+img_in_uint16 = cat(4, readimage(imds,1), readimage(imds,2), readimage(imds,3), img_nir);
 if isa(img_in_uint16,'uint16')
     disp('image is in uint16');
     img_in = im2uint8(img_in_uint16);
@@ -60,15 +61,6 @@ imwrite(img_in, [inputRGBNPath 'c.TIF'], 'tif');
 %train_label(inputRGBNPath,inputLabelPath,TrainPatchPath,LabelPatchPath,patch);
 %train_label(validationTrainInput,validationLabelInput,validationTrainPatch,validationLabelPatch,patch);
 train_label(testInput,testPatch,patch);
-
-%% GENERATE PATCHES -UCDNet
-
-patch = 512
-
-Utrain_label(inputRGBNPath,inputLabelPath,UTrainPatchPath,ULabelPatchPath,patch);
-Utrain_label(validationTrainInput,validationLabelInput,UvalidationTrainPatch,UvalidationLabelPatch,patch);
-%train_label(testInput,testPatch,patch);
-
 
 %% DELETE EMPTY TRAINING DATA (ALL BLACK)
 
@@ -127,14 +119,14 @@ tempdir = 'data\predictTest\';
 % pixelLabelID = [255 0];
 % pxdsTruth = pixelLabelDatastore(testLabelDir,classNames,pixelLabelID);
 
-pxdsResults = semanticseg(imds_test,mscff_net_u8,'MiniBatchSize',1,'ExecutionEnvironment','gpu', ...
+pxdsResults = semanticseg(imds_test,uc_net_kth_8epochs_3inps,'MiniBatchSize',1,'ExecutionEnvironment','gpu', ...
     'WriteLocation',tempdir,'NamePrefix','');
 
 %% SHOW FINAL RESULTS
 % inimg = imread([testInput 'test.tif']);
 % imshow(inimg);
-output = patch_to_image([testInput 'winterKTH.jpeg'], tempdir, 512, true);
-
+output = patch_to_image([testInput 'test_j.jpeg'], tempdir, 512, true);
+imwrite(output, 'data\result_test_j.jpg');
 %% TRY TO VISUALIZE THIS
 
 % I = read(imds_test);

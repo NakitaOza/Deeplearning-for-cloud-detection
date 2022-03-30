@@ -5,8 +5,8 @@
 
 raw_data_dir = 'data\RGBN_raw\';
 
-inputRGBNPath = 'data\inputRGBN\';
-inputLabelPath = 'data\inputLabel\';
+inputRGBNPath = 'data\winter\inputRGBN\';
+inputLabelPath = 'data\winter\inputLabel\';
 UTrainPatchPath = 'data\trainPatchU\';
 ULabelPatchPath = 'data\labelPatchU\';
 
@@ -51,7 +51,7 @@ imwrite(img_in, [inputRGBNPath 'c.TIF'], 'tif');
 
 %% Check size of input Image
 
-inputImage = imread([inputRGBNPath 'a.tif']);
+inputImage = imread([inputRGBNPath 'label2.tiff']);
 disp(size(inputImage));
 
 %% GENERATE PATCHES - UCDNet
@@ -85,9 +85,9 @@ size(img_patch); % PATCH SIZE  = 512 * 512
 
 imagesize = [512 512 3];
 
-[uc_net, log] = UCDNet(imagesize,UTrainPatchPath,ULabelPatchPath,UvalidationTrainPatch,UvalidationLabelPatch);
+[mscff_kth_8epochs_3inps, log] = MSCFF_V2(imagesize,UTrainPatchPath,ULabelPatchPath,UvalidationTrainPatch,UvalidationLabelPatch);
 
-save uc_net
+save mscff_kth_8epochs_3inps
 
 %% TEST - INPUT IMAGES
 testOGImage = imread('winterKTH.jpeg');   %THIS IS A TRAIN PATCH

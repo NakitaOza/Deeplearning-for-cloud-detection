@@ -12,7 +12,7 @@
 function [] = train_label(Pathrgbn,Outputimagedir,patch,index)
 
 
-Filergbn = dir(fullfile(Pathrgbn,'winterKTH.jpeg'));
+Filergbn = dir(fullfile(Pathrgbn,'test_j.jpeg'));
 % Filermask =  dir ( fullfile ( Pathmask , '*.tif' ));
 FileNamesrgbn = {Filergbn.name};
 % FileNamesmask = {Filermask.name};
