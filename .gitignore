@@ -9,3 +9,7 @@ checkpoint
 *.asv
 *.jpeg
 *.tiff
+
+data/
+labelling sessions/
+trainedNetworks/
