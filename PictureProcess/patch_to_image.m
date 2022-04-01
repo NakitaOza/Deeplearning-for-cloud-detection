@@ -26,6 +26,8 @@ for i = 1: count
         filePath = [PatchDir filename];
     end
 
+    disp(filePath);
+
     if(isfile(filePath))
         img_to_read = imread(filePath);
         if categorical

@@ -152,13 +152,13 @@ labelIDs   = {
     ]
     };
 pxds = pixelLabelDatastore(labelDir,classNames,labelIDs);
-trainingData = combine(imds,pxds);
+trainingData = pixelLabelImageDatastore(imds,pxds);
 disp('training dataset created');
 %%
 % Create validation data set
 imdsV = imageDatastore(imageDirV);
 pxdsV = pixelLabelDatastore(labelDirV,classNames,labelIDs);
-ValidationData = combine(imdsV,pxdsV);
+ValidationData = pixelLabelImageDatastore(imdsV,pxdsV);
 disp('validation dataset created');
 %%
 % Checkpoint file path

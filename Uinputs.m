@@ -22,50 +22,17 @@ predcitTestBinary = 'data\predictTestBinary\';
 testLabelPatch = 'data\testPatch\';
 patch = 512
 
-%% CONCAT RGB IMAGES INTO ONE IMAGE
-
-imDir = fullfile(raw_data_dir,'c_*.TIF');
-imds = imageDatastore(imDir);
-img_in_uint16 = cat(3, readimage(imds,1), readimage(imds,2), readimage(imds,3));
-if isa(img_in_uint16,'uint16')
-    disp('image is in uint16');
-    img_in = im2uint8(img_in_uint16);
-else
-    img_in = img_in_uint16;
-end
-imshow(img_in);
-
-% img_b = imread(fullfile(raw_data_dir, "a_B.TIF"));
-% img_g =  imread(fullfile(raw_data_dir, "a_G.TIF"));
-% img_r =  imread(fullfile(raw_data_dir, "a_R.TIF"));
-% img_in = cat(3, img_b, img_g, img_r);
-% % 
-% imshow(img_in);
-% 
-imwrite(img_in, [inputRGBNPath 'c.TIF'], 'tif');
-
-%imwrite(img_in, [validationTrainInput 'b.TIF'], 'tif')
-% testImage = imread("data\testInput\test_j.jpeg");
-% disp(size(testImage))
-% imwrite(testImage, [testInput 'test.TIF'], 'tif');
-
-%% Check size of input Image
-
-inputImage = imread([inputRGBNPath 'label2.tiff']);
-disp(size(inputImage));
 
 %% GENERATE PATCHES - UCDNet
 
 Utrain_label(inputRGBNPath,inputLabelPath,UTrainPatchPath,ULabelPatchPath,patch);
 Utrain_label(validationTrainInput,validationLabelInput,UvalidationTrainPatch,UvalidationLabelPatch,patch);
-%train_label(testInput,testPatch,patch);
 
 
 %% DELETE EMPTY TRAINING DATA (ALL BLACK)
 
 UDelete_All_0_Pic(UTrainPatchPath,ULabelPatchPath);
 UDelete_All_0_Pic(UvalidationTrainPatch,UvalidationLabelPatch);
-%Delete_All_0_Pic(testPatch);
 
 %% TEST STUFF
 img_patch_file_list = dir(fullfile(UTrainPatchPath,'*.jpg'));
@@ -83,11 +50,11 @@ size(img_patch); % PATCH SIZE  = 512 * 512
 % imageDirV: Validation data set folder path
 % labelDirV: Validation-label data set folder path
 
-imagesize = [512 512 3];
+imagesize = [512 512 4];
 
-[mscff_kth_8epochs_3inps, log] = MSCFF_V2(imagesize,UTrainPatchPath,ULabelPatchPath,UvalidationTrainPatch,UvalidationLabelPatch);
+[mscff_kth_NIR_83_Full, log4] = MSCFF_V2(imagesize,UTrainPatchPath,ULabelPatchPath,UvalidationTrainPatch,UvalidationLabelPatch);
 
-save mscff_kth_8epochs_3inps
+save mscff_kth_NIR_83_Full
 
 %% TEST - INPUT IMAGES
 testOGImage = imread('winterKTH.jpeg');   %THIS IS A TRAIN PATCH
@@ -121,7 +88,7 @@ tempdir = 'data\predictTest\';
 % pixelLabelID = [255 0];
 % pxdsTruth = pixelLabelDatastore(testLabelDir,classNames,pixelLabelID);
 
-pxdsResults = semanticseg(imds_test,uc_net,'MiniBatchSize',1,'ExecutionEnvironment','gpu','WriteLocation',tempdir);
+pxdsResults = semanticseg(imds_test,uc_net_kth_8epochs_3inps,'MiniBatchSize',1,'ExecutionEnvironment','gpu','WriteLocation',tempdir);
 
 %% TRY TO VISUALIZE THIS - CONVERT PERDICTION TO MASK - OR DO USING PATCH_TO_IMAGE.M
 
