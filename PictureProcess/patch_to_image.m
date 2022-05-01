@@ -39,7 +39,7 @@ for i = 1: count
         checkImageProprties = readimage(imds_test, 1);
         dimensions = ndims(checkImageProprties);
         if dimensions > 2
-            size_of_patch = size(checkImageProprties)
+            size_of_patch = size(checkImageProprties);
             img_to_read = zeros(patch, patch, size_of_patch(3));
         else
             img_to_read = zeros(patch, patch);

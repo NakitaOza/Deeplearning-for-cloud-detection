@@ -102,3 +102,12 @@ a_new = read(new_pxds)
 
 % inimg = imread([testInput 'test.tif']);
 % imshow(inimg);
+
+%% FILE CONVERIONS
+
+
+for i = [3,5]
+    a = imread(['data\validationInput\label' num2str(i) '.tiff']);
+    imwrite(a(:,:,1:3),['data\validationInput\3d_tiff\label' num2str(i) '.tiff'], 'tiff');
+end
+

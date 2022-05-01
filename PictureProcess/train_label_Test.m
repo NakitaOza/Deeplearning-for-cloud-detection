@@ -15,6 +15,7 @@ for i=1:filenum(2)
     disp('job done 3');
     inputimage=[Pathrgbn,FileNamesrgbn{i}];
     disp(['Processing ','No.',num2str(i),'/',num2str(filenum(2)),' Picture:',FileNamesrgbn{i}])
+    disp(inputimage);
     index=Patch_to_num_Test(patch,inputimage,Outputimagedir,index);
 end
 disp('job done 4');

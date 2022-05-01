@@ -13,15 +13,11 @@ function [] = train_label(Pathrgbn,Pathmask,Outputimagedir,Outputlabeldir,patch,
 
 
 Filergbn = dir(fullfile(Pathrgbn,'*.tiff'));
-disp(Filergbn);
 Filermask =  dir ( fullfile ( Pathmask , '*.tiff' ));
 FileNamesrgbn = {Filergbn.name};
-disp(FileNamesrgbn);
 FileNamesmask = {Filermask.name};
-disp(FileNamesrgbn);
 filenum=size(FileNamesrgbn);
 disp('job done 1');
-disp(filenum)
 
 if ~exist(Outputimagedir,'file')
     mkdir(Outputimagedir);
@@ -37,8 +33,6 @@ if(nargin==5)
     index=1;
     disp(filenum)
     for i=1:filenum(2)
-        disp(FileNamesmask{i});
-        disp(FileNamesrgbn{i});
         if(strcmp(FileNamesmask{i},FileNamesrgbn{i}))
             inputimage=[Pathrgbn,FileNamesrgbn{i}];
             inputlabel=[Pathmask,FileNamesmask{i}];
