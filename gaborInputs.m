@@ -1,7 +1,7 @@
 %% CONCAT RGB IMAGES AND GABOR NIR INTO ONE IMAGE
 
-% raw_data_dir = 'data\gaborInputs\';
-% output_dir = 'data\inputRGBN\'
+raw_data_dir = 'data\Final Data Used\inputRGBN\';
+output_dir = 'data\gaborOutputs\'
 % 
 % 
 % img_rgb = imread([raw_data_dir 'label3_RGB.jpeg']);
@@ -20,20 +20,25 @@
 % 
 % imwrite(img_in,[output_dir 'label3.tiff'], 'tiff');
 
-img_patch_16 = imread('data\testInput\label2_or.tif');
-img_patch = im2uint8(img_patch_16);
-img_patch_b = img_patch(:,:,1); 
-img_patch_g =img_patch(:,:,2);
-img_patch_r =img_patch(:,:,3);
-img_patch_nir =img_patch(:,:,4);
-figure, montage(img_patch, []);
-
-img_patch_b_g = getGaborImage(img_patch_b); 
-img_patch_g_g =getGaborImage(img_patch_g);
-img_patch_r_g =getGaborImage(img_patch_r);
-img_patch_nir_g =getGaborImage(img_patch_nir);
-figure, montage({img_patch_b_g, img_patch_g_g, img_patch_r_g img_patch_nir_g}, []);
-
+for count=[1,2,3,4,5,6,7,8,9,10]
+    img_patch = imread([raw_data_dir 'label' num2str(count) '.tiff']);
+    % img_patch = im2uint8(img_patch_16);
+    % img_patch_b = img_patch(:,:,1); 
+    % img_patch_g =img_patch(:,:,2);
+    % img_patch_r =img_patch(:,:,3);
+    img_patch_nir =img_patch(:,:,4);
+    % figure, montage(img_patch, []);
+    
+    % img_patch_b_g = getGaborImage(img_patch_b); 
+    % img_patch_g_g =getGaborImage(img_patch_g);
+    % img_patch_r_g =getGaborImage(img_patch_r);
+    img_patch_nir_g =getGaborImage(img_patch_nir);
+    img_in = cat(3,img_patch(:,:,1),img_patch(:,:,2),img_patch(:,:,3),img_patch_nir_g);
+    % figure, montage(img_in, []);
+    
+    imwrite(img_in,[output_dir 'label' num2str(count) '.tiff'], 'tiff');
+    % figure, montage({img_patch_b_g, img_patch_g_g, img_patch_r_g img_patch_nir_g}, []);
+end
 %% TEST
 testImage1 = imread([output_dir 'label1_test.tiff']);
 testImage = testImage1(:,:,4);
