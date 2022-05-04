@@ -1,9 +1,9 @@
 %% SELECT THE NETWORK
 
-net = MSCFF_RGB_NewWin_e8_noRepeat;
-netName = 'MSCFF_RGB_NewWin_e8_noRepeat'
+net = MSCFF_GaborNIR_NewWin_e8_noRepeat_noLabel2;
+netName = 'MSCFF_GaborNIR_NewWin_e8_noRepeat_noLabel2'
 
-testInput = 'data\testInput\3d_tiff\';
+testInput = 'data\testInput\gaborNIR\';
 
 testPatch = 'data\testPatch\';
 
@@ -11,7 +11,7 @@ testLabel = 'data\testLabel\';
 
 testLabelPatch = 'data\testLabelPatch\';
 
-testFileName = 'label5';
+testFileName = 'label3';
 
 predictionDir = 'data\predictTest\';
 
@@ -49,7 +49,7 @@ pxdsResults = semanticseg(imds_test, net,'MiniBatchSize',1,'ExecutionEnvironment
 
 % testFileName = 'winterKTH'; % IF LABEL3
 
-output = patch_to_image([testInput testFileName '.jpg'], predictionDir, 512, true);
+output = patch_to_image([testInput testFileName '.jpeg'], predictionDir, 512, true);
 
 imwrite(output, [imageResultDir 'result_' testFileName '_' netName '.jpg']);
 

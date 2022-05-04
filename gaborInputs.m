@@ -20,7 +20,7 @@ output_dir = 'data\gaborOutputs\'
 % 
 % imwrite(img_in,[output_dir 'label3.tiff'], 'tiff');
 
-for count=[1,2,3,4,5,6,7,8,9,10]
+for count=[11]
     img_patch = imread([raw_data_dir 'label' num2str(count) '.tiff']);
     % img_patch = im2uint8(img_patch_16);
     % img_patch_b = img_patch(:,:,1); 

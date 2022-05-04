@@ -1,12 +1,12 @@
 %% INPUT AND PATCH DATA DIRECTORIES - DECLARE
 
-inputRGBNPath = 'data\inputRGBN\3d_tiff\';
+inputRGBNPath = 'data\inputRGBN\gaborNIR\';
 inputLabelPath = 'data\inputLabel\';
 
 TrainPatchPath = 'data\trainPatch\';
 LabelPatchPath = 'data\labelPatch\';
 
-validationTrainInput = 'data\validationInput\3d_tiff\';
+validationTrainInput = 'data\validationInput\gaborNIR\';
 validationLabelInput = 'data\validationLabel\';
 
 validationTrainPatch = 'data\validationInputPatch\';
@@ -42,10 +42,10 @@ Delete_All_0_Pic(validationTrainPatch,validationLabelPatch);
 
 networkVarSaveDir = 'trainedNetworks\';
 
-imagesize = [patch patch 3];
+imagesize = [patch patch 4];
 
-[UCDNET_RGB_NewWin_e8_noRepeat, log] = UCDNet(imagesize,TrainPatchPath,LabelPatchPath,validationTrainPatch,validationLabelPatch);
-netName = getVarName(UCDNET_RGB_NewWin_e8_noRepeat)
+[MSCFF_GaborNIR_NewWin_e8_noRepeat_noLabel2, log] = MSCFF_V2(imagesize,TrainPatchPath,LabelPatchPath,validationTrainPatch,validationLabelPatch);
+netName = getVarName(MSCFF_GaborNIR_NewWin_e8_noRepeat_noLabel2)
 
 save ([networkVarSaveDir netName],netName);
 

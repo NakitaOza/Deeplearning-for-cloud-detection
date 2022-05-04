@@ -4,11 +4,13 @@ function [stack] = patch_to_image(OGImagePath,PatchDir,patch, categorical)
 
 inputFullImage = imread(OGImagePath);
 sizeI = size(inputFullImage);
+disp(sizeI)
 cols = sizeI(2);
 rows = sizeI(1);
 numberOfPatchesInRow = ceil(cols/patch)
 numberOfPatchesInCol = ceil(rows/patch)
-
+disp(numberOfPatchesInCol);
+disp(numberOfPatchesInRow);
 imds_test = imageDatastore(PatchDir);
 
 stack=[];
