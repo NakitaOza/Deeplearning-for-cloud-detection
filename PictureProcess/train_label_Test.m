@@ -2,8 +2,8 @@ function [] = train_label_Test(Pathrgbn,testFileName, Outputimagedir,patch)
 
 
 Filergbn = dir(fullfile(Pathrgbn, strcat(testFileName, '.tiff')));
-FileNamesrgbn = {Filergbn.name};
-filenum=size(FileNamesrgbn);
+FileNamesrgbn = {Filergbn.name}
+filenum=size(FileNamesrgbn)
 disp('job done 1');
 if ~exist(Outputimagedir,'file')
     mkdir(Outputimagedir);

@@ -10,8 +10,8 @@ TraindataName = { Traindata . name };
 Labeldata=dir(fullfile(Labelpath,'*.jpg'));
 LabeldataName = { Labeldata.name };
 disp(LabeldataName);
-num=size(TraindataName);
-num = num ( 2 );
+num=size(TraindataName)
+num = num ( 2 )
 index={};
 for i=1:num
     Picturename=[Trainpath,TraindataName{i}];

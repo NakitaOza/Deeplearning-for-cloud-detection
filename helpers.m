@@ -1,19 +1,20 @@
 %% CONCAT RGB IMAGES INTO ONE IMAGE
 
-raw_data_dir = 'data\RGBN_raw\';
+raw_data_dir = 'data\Final Data Used\inputRGBN\';
+output_data_dit = 'data\Final Data Used\inputRGBN\NIR_tiff\'
 
 
-imDir = fullfile(raw_data_dir,'c_*.TIF');
-imds = imageDatastore(imDir);
-%img_nir = apply gbaor (readimage(imds,4))
-img_in_uint16 = cat(4, readimage(imds,1), readimage(imds,2), readimage(imds,3), img_nir);
-if isa(img_in_uint16,'uint16')
-    disp('image is in uint16');
-    img_in = im2uint8(img_in_uint16);
-else
-    img_in = img_in_uint16;
-end
-imshow(img_in);
+% imDir = fullfile(raw_data_dir,'label*.tiff');
+% imds = imageDatastore(imDir);
+% %img_nir = apply gbaor (readimage(imds,4))
+% img_in_uint16 = cat(4, readimage(imds,1), readimage(imds,2), readimage(imds,3), img_nir);
+% if isa(img_in_uint16,'uint16')
+%     disp('image is in uint16');
+%     img_in = im2uint8(img_in_uint16);
+% else
+%     img_in = img_in_uint16;
+% end
+% imshow(img_in);
 
 % img_b = imread(fullfile(raw_data_dir, "a_B.TIF"));
 % img_g =  imread(fullfile(raw_data_dir, "a_G.TIF"));
@@ -22,12 +23,13 @@ imshow(img_in);
 % % 
 % imshow(img_in);
 % 
-imwrite(img_in, [inputRGBNPath 'c.TIF'], 'tif');
+% imwrite(img_in, [inputRGBNPath 'c.TIF'], 'tif');
 
 %imwrite(img_in, [validationTrainInput 'b.TIF'], 'tif')
-% testImage = imread("data\testInput\test_j.jpeg");
-% disp(size(testImage))
-% imwrite(testImage, [testInput 'test.TIF'], 'tif');
+
+testImage = imread([raw_data_dir 'label11.tiff']);
+testNIRImage = testImage(: ,:, 4);
+imwrite(testNIRImage, [output_data_dit 'label11.tiff'], 'tiff');
 
 %% Check size of input Image
 
@@ -44,16 +46,16 @@ size(img_patch) % PATCH SIZE  = 128 * 128 * 3
 testOGImage = imread('winterKTH.jpeg');   %THIS IS A TRAIN PATCH
 disp(size(testOGImage));
 targetSize = [128 128];
-testImage = imresize(testOGImage,targetSize);
+testImage1 = imresize(testOGImage,targetSize);
 
-imshow(testImage)
+imshow(testImage1)
 
 %% PREDICT - INPUT IMAGES
-testImage = imread("data\trainPatch\202.jpg");
-disp(size(testImage));
-C = semanticseg(testImage,mscff_net_u8);
-B = labeloverlay(testImage,C);
-max(testImage, [], 'all');
+testImage1 = imread("data\trainPatch\202.jpg");
+disp(size(testImage1));
+C = semanticseg(testImage1,mscff_net_u8);
+B = labeloverlay(testImage1,C);
+max(testImage1, [], 'all');
 
 % cloudMask = C == 'cloud';
 % 
@@ -110,4 +112,21 @@ for i = [3,5]
     a = imread(['data\validationInput\label' num2str(i) '.tiff']);
     imwrite(a(:,:,1:3),['data\validationInput\3d_tiff\label' num2str(i) '.tiff'], 'tiff');
 end
+
+%% BLOCKPROC FOR STICHING
+f=dir('data\testLabelPatch\*.jpg')
+files={f.name}
+for k=1:numel(files)
+  Im(k)=imread(files{k})
+end
+ImS = reshape(Im,1,1,36);
+cell2mat(ImS);
+%BI = zeros(1,1,36);
+f = @(x) ImS(:,:,x.data);
+Binary=blockproc( reshape(1:36,6,6)', [512,512], f );
+
+
+%% % 
+[counts,binLocations] = imhist(A);
+imhist(B);
 

@@ -1,12 +1,12 @@
 %% INPUT AND PATCH DATA DIRECTORIES - DECLARE
 
-inputRGBNPath = 'data\inputRGBN\gaborNIR\';
+inputRGBNPath = 'data\inputRGBN\gaborrgb\';
 inputLabelPath = 'data\inputLabel\';
 
 TrainPatchPath = 'data\trainPatch\';
 LabelPatchPath = 'data\labelPatch\';
 
-validationTrainInput = 'data\validationInput\gaborNIR\';
+validationTrainInput = 'data\validationInput\gaborrgb\';
 validationLabelInput = 'data\validationLabel\';
 
 validationTrainPatch = 'data\validationInputPatch\';
@@ -34,21 +34,18 @@ train_label(validationTrainInput,validationLabelInput,validationTrainPatch,valid
 Delete_All_0_Pic(TrainPatchPath,LabelPatchPath);
 Delete_All_0_Pic(validationTrainPatch,validationLabelPatch);
 
-%% Match intensity of RGB with GbaorNIR, discard if does not match
-
-% matchGaborWithRGB(TrainPatchPath);
-
 %% NETWORK
 
 networkVarSaveDir = 'trainedNetworks\';
 
-imagesize = [patch patch 4];
+imagesize = [patch patch];
 
-[MSCFF_GaborNIR_NewWin_e8_noRepeat_noLabel2, log] = MSCFF_V2(imagesize,TrainPatchPath,LabelPatchPath,validationTrainPatch,validationLabelPatch);
-netName = getVarName(MSCFF_GaborNIR_NewWin_e8_noRepeat_noLabel2)
+[UCDNET_Gabor_RGB_ONLY, log] = UCDNet(imagesize,TrainPatchPath,LabelPatchPath,validationTrainPatch,validationLabelPatch);
+
+netName = getVarName(UCDNET_Gabor_RGB_ONLY)
 
 save ([networkVarSaveDir netName],netName);
-
+   
 
 
 

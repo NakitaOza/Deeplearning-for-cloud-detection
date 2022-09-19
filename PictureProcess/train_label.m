@@ -1,4 +1,4 @@
-function [] = train_label(Pathrgbn,Pathmask,Outputimagedir,Outputlabeldir,patch,index)
+function [] = train_label(Pathrgbn,testFileName, Pathmask,Outputimagedir,Outputlabeldir,patch,index)
 % is used to batch process the training images and label images in the folder as image slices of the specified size, and the Patch_to_num function needs to be called
 
 %Author: Cheng Xin, Ocean University of China, Email: chengxin@stu.ouc.edu.cn
@@ -12,8 +12,8 @@ function [] = train_label(Pathrgbn,Pathmask,Outputimagedir,Outputlabeldir,patch,
 % Note: To avoid mistakes, please name the training image and the corresponding label image with the same name
 
 
-Filergbn = dir(fullfile(Pathrgbn,'*.tiff'));
-Filermask =  dir ( fullfile ( Pathmask , '*.tiff' ));
+Filergbn = dir(fullfile(Pathrgbn, strcat(testFileName, '.tiff')));
+Filermask =  dir ( fullfile (Pathmask, strcat(testFileName, '.tiff')));
 FileNamesrgbn = {Filergbn.name};
 FileNamesmask = {Filermask.name};
 filenum=size(FileNamesrgbn);
@@ -23,12 +23,13 @@ if ~exist(Outputimagedir,'file')
     mkdir(Outputimagedir);
 end
 if ~exist(Outputlabeldir,'file')
+    disp('NOT FOUND MKDIR')
     mkdir(Outputlabeldir);
 end
 
 
 
-if(nargin==5)
+if(nargin==6)
     disp('job done 3');
     index=1;
     disp(filenum)
@@ -44,7 +45,7 @@ if(nargin==5)
             break;
         end
     end
-elseif ( nargin == 6 )
+elseif ( nargin == 7 )
     disp('job done 5');
     for i=1:filenum(2)
         if(strcmp(FileNamesmask{i},FileNamesrgbn{i}))

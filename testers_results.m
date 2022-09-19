@@ -1,36 +1,38 @@
 %% SELECT THE NETWORK
 
-net =  UCDNET_NIR_ONLY;
-netName = 'UCDNET_NIR_ONLY'
+net = MSCFF_NIR_NewWin_e8_noRepeat;
+netName = 'MSCFF_NIR_NewWin_e8_noRepeat'
 
-testInput = 'data\testInput\NIR_tiff\';
+testInput = 'Final Results\INPUTS\RGBNIR\';
 
-testPatch = 'data\testPatch\';
+testInputPatch = 'Final Results\PROCESSING\testInputPatch\';
 
-testLabel = 'data\testLabel\';
+testLabel = 'Final Results\LABELS\';
 
-testLabelPatch = 'data\testLabelPatch\';
+testLabelPatch = 'Final Results\PROCESSING\testLabelPatch\';
 
-testFileName = 'label3';
+testFileName = 'scene3'
 
-predictionDir = 'data\predictTest\';
+predictionDir = 'Final Results\PROCESSING\predictTest\';
 
-imageResultDir = 'data\results\';
+imageResultDir = 'Final Results\PROCESSING\results\';
+
+jpgDir = 'Final Results\JPEGS\';
 
 patch = 512;
 
 %% GENERATE PATCHES OF TEST INPUT
 
 %empty the folder
-delete([testPatch '*']);
+delete([testInputPatch '*']);
 delete([testLabelPatch '*']);
 %train_label_Test(testInput,testFileName,testPatch,patch);
-train_label(testInput,testLabel,testPatch,testLabelPatch,patch);
+train_label(testInput,testFileName,testLabel,testInputPatch,testLabelPatch, patch);
 
 %% DELETE EMPTY TEST PATCHES (ALL BLACK)
 
 %Delete_All_0_Pic_Test(testPatch);
-Delete_All_0_Pic(testPatch,testLabelPatch);
+%Delete_All_0_Pic(testInputPatch,testLabelPatch);
 
 %% PREDICT - DATA STORE FOR ONE IMAGE
 
@@ -39,7 +41,7 @@ delete([predictionDir '*']);
 
 % first create patches using section 1,2(KTH images are already 3 channel),3 and 4
 
-imds_test = imageDatastore(testPatch);
+imds_test = imageDatastore(testInputPatch);
 
 tic
 [pxdsResults] = semanticseg(imds_test, net,'MiniBatchSize',1,'ExecutionEnvironment','gpu','WriteLocation',predictionDir,'NamePrefix','');
@@ -50,9 +52,9 @@ toc
 
 % testFileName = 'winterKTH'; % IF LABEL3
 
-output = patch_to_image([testInput testFileName '.jpeg'], predictionDir, patch, true);
+output = patch_to_image([jpgDir testFileName '.jpg'], predictionDir, patch, true);
 
-%imwrite(output, [imageResultDir 'result_' testFileName '_' netName '.jpg']);
+imwrite(output, [imageResultDir 'result_' testFileName '_' netName '.jpg']);
 
 % montage({[imageResultDir 'result_winterKTH_uc_net_kth_8epochs_3inps.jpeg'],[imageResultDir 'result_winterKTH_uc_net_kth_NIR_83_Full.jpeg'],[imageResultDir 'result_' testFileName '_' netName '.jpeg'});
 
