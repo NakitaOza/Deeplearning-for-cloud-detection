@@ -10,11 +10,12 @@ function [net,log] = UCDNet(imagesize,imageDir,labelDir,imageDirV,labelDirV)
 % labelDir: Label data set folder path
 % imageDirV: Validation data set folder path
 % labelDirV: Validation-label data set folder path
-
+workspace;
 %%
 % Create a lgraph.
 % Create a lgraph variable to include the network layer.
 lgraph = layerGraph();
+disp('lgraph');
 %%
 % Add layer branch
 % Add network branches to the lgraph. Each branch is a linear layer group.
@@ -140,14 +141,25 @@ plot(lgraph);
 % Create training data set
 imds = imageDatastore(imageDir);
 classNames = ["cloud","background"];
-labelIDs   = [255 0];
+labelIDs   = {
+    %cloud
+    [   
+    255;
+    ]
+    %background and snowIce and binary made zero in label saving
+    [   
+    0;
+    ]
+    };
 pxds = pixelLabelDatastore(labelDir,classNames,labelIDs);
 trainingData = pixelLabelImageDatastore(imds,pxds);
+disp('training dataset created');
 %%
 % Create validation data set
 imdsV = imageDatastore(imageDirV);
 pxdsV = pixelLabelDatastore(labelDirV,classNames,labelIDs);
 ValidationData = pixelLabelImageDatastore(imdsV,pxdsV);
+disp('validation dataset created');
 %%
 % Checkpoint file path
 pwd=cd;
@@ -160,14 +172,18 @@ options = trainingOptions('sgdm', ...
     'LearnRateSchedule','piecewise', ...
     'LearnRateDropFactor',0.2, ...
     'LearnRateDropPeriod',5, ...
-    'MaxEpochs',30, ...
-    'MiniBatchSize',2, ...
+    'MaxEpochs',1, ...
+    'MiniBatchSize',3, ...
     'Shuffle','every-epoch',...
     'ValidationData',ValidationData,...
+    'ExecutionEnvironment','gpu',...
     'Plots','training-progress',...
-    'CheckpointPath',checkpointpath);
+    'CheckpointPath',checkpointpath, ...
+    'ValidationFrequency',20);
+disp(options);
 %%
 % Model training
+disp('model training');
 [net,log] = trainNetwork(trainingData,lgraph,options);
 end
 

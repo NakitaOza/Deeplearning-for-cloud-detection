@@ -1,0 +1,15 @@
+
+*.TIF
+*.png
+
+*.jpg
+checkpoint
+*.asv
+*.asv
+*.asv
+*.jpeg
+*.tiff
+
+data/
+labelling sessions/
+trainedNetworks/

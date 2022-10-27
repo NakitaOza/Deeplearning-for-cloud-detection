@@ -1,5 +1,6 @@
-function [net,log] = MSCFF_V2(imagesize,imageDir,labelDir,imageDirV,labelDirV)
-% A full convolution neural network model based on multi-scale feature fusion for cloud area detection of remote sensing image
+function [net2,log2] = MSCFF_V2(imagesize,imageDir,labelDir,imageDirV,labelDirV)
+% A full convolution neural network model based on multi-scale feature fusion for 
+% cloud area detection of remote sensing image
 % Construct MSCFF_V2 model using Matlab Deep Learning Toolbox 14.0
 
 % Author: Cheng Xin, Ocean University of China, Email: chengxin@stu.ouc.edu.cn
@@ -12,6 +13,7 @@ function [net,log] = MSCFF_V2(imagesize,imageDir,labelDir,imageDirV,labelDirV)
 % labelDirV: Validation-label data set folder path
 
 %%
+workspace;
 % Create a lgraph.
 % Create a lgraph variable to include the network layer.
 lgraph = layerGraph();
@@ -384,18 +386,30 @@ lgraph = connectLayers(lgraph,"transposed-conv_7","depthcat/in5");
 %%
 % Draw layer
 plot(lgraph);
+disp('plot lgraph');
 %%
 % Create training data set
 imds = imageDatastore(imageDir);
 classNames = ["cloud","background"];
-labelIDs   = [255 0];
+labelIDs   = {
+    %cloud
+    [   
+    255;
+    ]
+    %background
+    [
+    0;
+    ]
+    };
 pxds = pixelLabelDatastore(labelDir,classNames,labelIDs);
 trainingData = pixelLabelImageDatastore(imds,pxds);
+disp('training dataset created');
 %%
 % Create validation data set
 imdsV = imageDatastore(imageDirV);
 pxdsV = pixelLabelDatastore(labelDirV,classNames,labelIDs);
 ValidationData = pixelLabelImageDatastore(imdsV,pxdsV);
+disp('validation dataset created');
 %%
 % Checkpoint file path
 pwd=cd;
@@ -403,20 +417,23 @@ checkpointpath=fullfile(pwd,'checkpoint');
 if ~exist(checkpointpath,'dir')
 	mkdir(checkpointpath);
 end
-% Training parameters
+%% Training parameters
 options = trainingOptions('sgdm', ...
     'LearnRateSchedule','piecewise', ...
     'LearnRateDropFactor',0.5, ...
     'LearnRateDropPeriod',5, ...
-    'MaxEpochs',30, ...
-    'MiniBatchSize',1, ...
+    'MaxEpochs',8, ...
+    'MiniBatchSize',2, ...
     'Shuffle','every-epoch',...
     'ValidationData',ValidationData,...
     'Plots','training-progress',...
-    'ExecutionEnvironment','cpu',...
+    'ExecutionEnvironment','gpu',...
     'CheckpointPath',checkpointpath);
+disp(options);
 %%
 % Model training
-[net,log] = trainNetwork(trainingData,lgraph,options);
+disp('model training');
+
+[net2,log2] = trainNetwork(trainingData,lgraph,options);
 end
 

@@ -1,11 +1,14 @@
 # 基于深度学习的遥感影像云区检测模型
 
-MSCFF_V2模型是一种全卷积神经网络模型，参考了论文“Li, Z., Shen, H., Cheng, Q., Liu, Y., You, S., He, Z., 2019. Deep learning based cloud detection for medium and high resolution remote sensing images of different sensors. ISPRS Journal of Photogrammetry and Remote Sensing. 150, 197–212”。MSCFF_V2对论文MSCFF模型中的空洞卷积中卷积核的扩展率进行了修改，并基于Matlab Deep Learning Toolbox 14.0对模型进行了重新构建。
-
+The MSCFF_V2 model is a fully convolutional neural network model, referring to the paper "Li, Z., Shen, H., Cheng, Q., Liu, Y., You, S., He, Z., 2019. 
+Deep learning based cloud detection for medium and high resolution remote sensing images of different sensors. ISPRS Journal of Photogrammetry and Remote Sensing.
+ 150, 197–212”. MSCFF_V2 modifies the expansion rate of the convolution kernel in the atrous convolution in the MSCFF model of the paper, and rebuilds the model based on Matlab Deep Learning Toolbox 14.0.
 ![MSCFF_V2](https://gitee.com/CHENGXIN0219/Deeplearning-for-cloud-detection/raw/master/imgs/MSCFF_V2.png)
 
-UCD-Net模型是一种全卷积神经网络模型，参考了论文“ Ronneberger, O., P. Fischer and T. Brox, U-Net: Convolutional Networks for Biomedical Image Segmentation. 2015”。UCD-Net模型对论文U-Net模型进行了修改，添加了Batch Normalization层、修改卷积模式为same、将双线性插值上采样层修改为转置卷积层进行上采样。
-
+The UCD-Net model is a fully convolutional neural network model, referring to the paper "Ronneberger, O., P. Fischer and T. Brox, U-Net: Convolutional Networks 
+for Biomedical Image Segmentation. 2015". The UCD-Net model modifies the U-Net model of the paper, adding a Batch Normalization layer, modifying the convolution 
+mode to the same, and modifying the bilinear interpolation upsampling layer to a transposed convolution layer for upsampling.
 ![UCD-Net](https://gitee.com/CHENGXIN0219/Deeplearning-for-cloud-detection/raw/master/imgs/UCD-Net%20.png)
 
-PictureProcess文件夹给出了数据集制作的批处理程序，可以将遥感图像制作成指定大小的输入图像，用于模型的训练。其中train_label函数通过调用Patch_to_num函数，可以批处理文件夹中的所有图像。
+The PictureProcess folder gives the batch program for data set production, which can produce remote sensing images into input images of specified size for model 
+training. The train_label function can batch all images in the folder by calling the Patch_to_num function.
